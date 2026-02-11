@@ -3,6 +3,7 @@ import argparse
 import csv
 import json
 import os
+import subprocess
 import sys
 from datetime import date, timedelta
 
@@ -71,8 +72,8 @@ def parse_args():
     )
     parser.add_argument(
         "--sheet-tab",
-        default="Sheet1",
-        help="Google Sheet tab name to write data into (default: Sheet1).",
+        default="raw_data",
+        help="Google Sheet tab name to write data into (default: raw_data).",
     )
     parser.add_argument(
         "--sheet-title",
@@ -224,6 +225,17 @@ def load_sheet_config(explicit_sheet_id, explicit_sheet_tab, sheet_config_path):
             sheet_id = config.get("sheet_id", "").strip()
         if not sheet_tab:
             sheet_tab = config.get("sheet_tab", "").strip()
+        if not sheet_id and not sheet_tab:
+            print(
+                f"Warning: {sheet_config_path} is empty. "
+                "Provide a sheet_id or sheet_tab, or pass flags explicitly.",
+                file=sys.stderr,
+            )
+    elif sheet_config_path:
+        print(
+            f"Warning: sheet config file not found: {sheet_config_path}",
+            file=sys.stderr,
+        )
 
     if not sheet_tab:
         sheet_tab = "Sheet1"
@@ -408,13 +420,22 @@ def main():
             sheet_tab=sheet_tab,
             share_with=args.share_with,
         )
-        store_sheet_config(args.sheet_config, sheet_id, sheet_tab)
         print(f"Uploaded to Google Sheet: {sheet_url}")
     else:
         print(
             "Google Sheets upload skipped (missing key file). "
             "Provide --gcp-key or place key.json in the project directory."
         )
+
+    result = subprocess.run([sys.executable, "cost_by_service.py"], check=False)
+    if result.returncode != 0:
+        print("Error: cost_by_service.py failed.", file=sys.stderr)
+        sys.exit(result.returncode)
+
+    result = subprocess.run([sys.executable, "cost_by_account.py"], check=False)
+    if result.returncode != 0:
+        print("Error: cost_by_account.py failed.", file=sys.stderr)
+        sys.exit(result.returncode)
 
 
 if __name__ == "__main__":

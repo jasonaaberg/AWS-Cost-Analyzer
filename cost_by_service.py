@@ -105,7 +105,6 @@ def main():
             sheet_id=sheet_id,
             sheet_tab=sheet_tab,
         )
-        store_sheet_config(args.sheet_config, sheet_id, sheet_tab)
         print(f"Uploaded to Google Sheet: {sheet_url}")
     else:
         print(

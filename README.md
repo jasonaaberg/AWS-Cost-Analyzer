@@ -89,8 +89,9 @@ cp key.json.example key.json
 ```bash
 cp sheet_config.json.example sheet_config.json
 ```
-If you leave it blank, the script creates a new sheet and saves the ID.
-You can also set `sheet_tab` to control which tab receives the data.
+If you leave it blank, the script creates a new sheet for each run.
+You can set `sheet_id` and `sheet_tab` to control where data is written.
+If the file is missing or empty, the script logs a warning.
 
 6. Use the service account email to share the target sheet or allow the script to create a new one
 
@@ -105,7 +106,7 @@ This will:
 1. Read AWS credentials from `aws_accounts.json`
 2. Fetch Cost Explorer data for the last 30 days
 3. Write results to `aws_costs.csv`
-4. Upload the CSV to Google Sheets if `key.json` is present and optionally store the sheet ID in `sheet_config.json`
+4. Upload the CSV to Google Sheets if `key.json` is present
 
 ### Summarize costs by service:
 ```bash
@@ -146,7 +147,7 @@ Options:
 - `--gcp-key`: Path to Google service account key (default: `key.json`)
 - `--sheet-id`: Google Sheet ID to update (if omitted, a new sheet is created)
 - `--sheet-config`: JSON file that stores the Google Sheet ID (default: `sheet_config.json`)
-- `--sheet-tab`: Google Sheet tab name to write data into (default: `Sheet1`)
+- `--sheet-tab`: Google Sheet tab name to write data into (default: `raw_data`)
 - `--sheet-title`: Title for new Google Sheets (default: AWS Cost Analyzer)
 - `--share-with`: Email to share the Google Sheet with
 
