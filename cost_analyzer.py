@@ -5,7 +5,7 @@ import json
 import os
 import subprocess
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
@@ -370,6 +370,7 @@ def process_account(account_config, region, start_date, end_date, granularity, g
 
 def main():
     args = parse_args()
+    run_started_at = datetime.now(timezone.utc)
     start_date, end_date = default_dates(args.start_date, args.end_date)
     sheet_id, sheet_tab = load_sheet_config(
         args.sheet_id, args.sheet_tab, args.sheet_config
@@ -436,6 +437,44 @@ def main():
     if result.returncode != 0:
         print("Error: cost_by_account.py failed.", file=sys.stderr)
         sys.exit(result.returncode)
+
+    logs_path = "logs.csv"
+    run_finished_at = datetime.now(timezone.utc)
+    with open(logs_path, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(
+            [
+                "run_started_at_utc",
+                "run_finished_at_utc",
+                "data_start_date",
+                "data_end_date",
+                "granularity",
+                "group_by",
+                "rows_written",
+            ]
+        )
+        writer.writerow(
+            [
+                run_started_at.isoformat(),
+                run_finished_at.isoformat(),
+                start_date,
+                end_date,
+                args.granularity,
+                args.group_by,
+                total_rows,
+            ]
+        )
+
+    if args.gcp_key and os.path.exists(args.gcp_key):
+        _, sheet_url = upload_csv_to_google_sheet(
+            logs_path,
+            args.gcp_key,
+            sheet_id=sheet_id,
+            sheet_title=args.sheet_title,
+            sheet_tab="logs",
+            share_with=args.share_with,
+        )
+        print(f"Uploaded logs to Google Sheet: {sheet_url}")
 
 
 if __name__ == "__main__":

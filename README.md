@@ -107,6 +107,7 @@ This will:
 2. Fetch Cost Explorer data for the last 30 days
 3. Write results to `aws_costs.csv`
 4. Upload the CSV to Google Sheets if `key.json` is present
+5. Upload a `logs` tab with run timestamps and the data date range
 
 ### Summarize costs by service:
 ```bash
@@ -182,6 +183,7 @@ Options:
 The script generates:
 - **aws_costs.csv**: Local CSV file with cost data
 - **Google Sheet**: Updated with the same data (if configured)
+ - **logs tab**: Run timestamps and the data date range
 
 Columns:
 - `account_id`: AWS Account ID
