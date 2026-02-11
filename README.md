@@ -107,6 +107,28 @@ This will:
 3. Write results to `aws_costs.csv`
 4. Upload the CSV to Google Sheets if `key.json` is present and optionally store the sheet ID in `sheet_config.json`
 
+### Summarize costs by service:
+```bash
+python3 cost_by_service.py
+```
+
+This will:
+1. Read `aws_costs.csv`
+2. Aggregate total cost per service
+3. Write results to `cost_by_service.csv`
+4. Upload the CSV to the `cost_by_service` tab in the same Google Sheet (if configured)
+
+### Summarize costs by account:
+```bash
+python3 cost_by_account.py
+```
+
+This will:
+1. Read `aws_costs.csv`
+2. Aggregate total cost per account
+3. Write results to `cost_by_account.csv`
+4. Upload the CSV to the `cost_by_account` tab in the same Google Sheet (if configured)
+
 ### Command-line Options:
 
 ```bash
@@ -127,6 +149,32 @@ Options:
 - `--sheet-tab`: Google Sheet tab name to write data into (default: `Sheet1`)
 - `--sheet-title`: Title for new Google Sheets (default: AWS Cost Analyzer)
 - `--share-with`: Email to share the Google Sheet with
+
+### cost_by_service.py Options:
+
+```bash
+python3 cost_by_service.py --help
+```
+
+Options:
+- `--input`: Input CSV filename (default: `aws_costs.csv`)
+- `--output`: Output CSV filename (default: `cost_by_service.csv`)
+- `--gcp-key`: Path to Google service account key (default: `key.json`)
+- `--sheet-config`: JSON file that stores the Google Sheet ID (default: `sheet_config.json`)
+- `--sheet-tab`: Google Sheet tab name to write data into (default: `cost_by_service`)
+
+### cost_by_account.py Options:
+
+```bash
+python3 cost_by_account.py --help
+```
+
+Options:
+- `--input`: Input CSV filename (default: `aws_costs.csv`)
+- `--output`: Output CSV filename (default: `cost_by_account.csv`)
+- `--gcp-key`: Path to Google service account key (default: `key.json`)
+- `--sheet-config`: JSON file that stores the Google Sheet ID (default: `sheet_config.json`)
+- `--sheet-tab`: Google Sheet tab name to write data into (default: `cost_by_account`)
 
 ## Output
 

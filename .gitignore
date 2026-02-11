@@ -42,6 +42,9 @@ sheet_config.json
 
 # Output Files
 aws_costs.csv
+cost_by_service.csv
+cost_by_account.csv
+*.csv
 *.log
 
 # OS

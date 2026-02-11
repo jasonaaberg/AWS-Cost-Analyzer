@@ -176,7 +176,7 @@ def upload_csv_to_google_sheet(
         .update(
             spreadsheetId=sheet_id,
             range=f"{sheet_tab}!A1",
-            valueInputOption="RAW",
+            valueInputOption="USER_ENTERED",
             body={"values": rows},
         )
         .execute()
